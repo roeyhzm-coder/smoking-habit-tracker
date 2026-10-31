@@ -1,14 +1,15 @@
 import { useRef, useState, type ReactNode } from 'react';
 import { Database, Download, RotateCcw, Sparkles, Trash2, Upload } from 'lucide-react';
 import type { CategoryId, LogEntry, PacingFocus } from '../types';
-import { CATEGORY_IDS, CATEGORY_META, FOCUS_LABEL } from '../lib/categories';
-import { buildLedger, describeRule, formatNum } from '../lib/calc';
+import { CATEGORY_DISPLAY_ORDER, CATEGORY_META, CategoryIcon, FOCUS_LABEL } from '../lib/categories';
+import { buildLedger, formatNum } from '../lib/calc';
 import { monthKeyOf, monthNameOnly } from '../lib/dates';
 import { exportJson, useStore } from '../store/store';
 import { useAppData } from '../store/hooks';
 import { useUi } from '../store/ui';
 import { Modal } from './ui/Modal';
 import { InlineNumber } from './ui/InlineNumber';
+import { OptionalNumberInput } from './ui/OptionalNumberInput';
 
 function Field({ label, hint, children }: { label: string; hint?: string; children: ReactNode }) {
   return (
@@ -47,23 +48,6 @@ function Segmented<T extends string>({
         </button>
       ))}
     </div>
-  );
-}
-
-function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: boolean) => void; label: string }) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      aria-label={label}
-      onClick={() => onChange(!checked)}
-      className={`relative h-6 w-11 rounded-full transition-colors ${checked ? 'bg-sky-500' : 'bg-zinc-700'}`}
-    >
-      <span
-        className={`absolute top-0.5 size-5 rounded-full bg-white shadow transition-all ${checked ? 'start-[1.375rem]' : 'start-0.5'}`}
-      />
-    </button>
   );
 }
 
@@ -137,7 +121,7 @@ export function SettingsModal({ now }: { now: Date }) {
   return (
     <Modal open onClose={close} title="הגדרות תקציב וקנסות">
       <div role="tablist" className="mb-2 grid grid-cols-3 gap-1 rounded-xl border border-white/8 bg-zinc-950 p-1">
-        {CATEGORY_IDS.map((c) => (
+        {CATEGORY_DISPLAY_ORDER.map((c) => (
           <button
             key={c}
             role="tab"
@@ -148,7 +132,10 @@ export function SettingsModal({ now }: { now: Date }) {
               c === cat ? 'bg-zinc-100 text-zinc-950' : 'text-zinc-400 hover:text-zinc-100'
             }`}
           >
-            {CATEGORY_META[c].label}
+            <span className="inline-flex items-center gap-1.5">
+              <CategoryIcon category={c} className="size-4" color={c === cat && c === 'cigarettes' ? 'text-zinc-500' : undefined} />
+              {CATEGORY_META[c].label}
+            </span>
           </button>
         ))}
       </div>
@@ -163,17 +150,15 @@ export function SettingsModal({ now }: { now: Date }) {
           />
         </Field>
 
-        <Field label="תקציב שבועי" hint="שבוע מתחיל ביום ראשון">
-          <div className="flex items-center gap-3">
-            {s.weeklyEnabled ? (
-              <InlineNumber
-                label="תקציב שבועי"
-                value={s.weeklyLimit}
-                onSave={(v) => updateSettings(cat, { weeklyLimit: Math.round(v) })}
-              />
-            ) : null}
-            <Toggle label="הפעלת תקציב שבועי" checked={s.weeklyEnabled} onChange={(v) => updateSettings(cat, { weeklyEnabled: v })} />
-          </div>
+        <Field label="מגבלה שבועית (רשות)" hint="השאר ריק או 0 = ללא מגבלה שבועית · שבוע מתחיל ביום ראשון">
+          <span className="flex items-center gap-1.5 text-xs text-zinc-400">
+            <OptionalNumberInput
+              label="מגבלה שבועית"
+              value={s.weeklyLimit}
+              onCommit={(v) => updateSettings(cat, { weeklyLimit: v })}
+            />
+            לשבוע
+          </span>
         </Field>
 
         <Field
@@ -211,39 +196,20 @@ export function SettingsModal({ now }: { now: Date }) {
         </Field>
 
         <div className="py-3">
-          <div className="text-sm font-semibold text-zinc-200">הגדרת קנס חריגה</div>
-          <div className="text-[11px] text-zinc-500">{describeRule(s.penalty, meta.singular)}</div>
-          <div className="mt-3 flex flex-wrap items-center gap-3">
-            <Segmented
-              value={s.penalty.mode}
-              options={[
-                { value: 'multiplier', label: 'מכפיל קנס' },
-                { value: 'fixed', label: 'קנס קבוע' },
-              ]}
-              onChange={(v) => updatePenaltyRule(cat, { mode: v })}
+          <div className="text-sm font-semibold text-zinc-200">קנס על חריגה</div>
+          <div className="mt-2 flex flex-wrap items-center gap-1.5 rounded-xl border border-white/8 bg-zinc-950/60 px-3 py-2.5 text-sm text-zinc-300">
+            על כל חריגה מהתקציב, הורד
+            <InlineNumber
+              label="קנס לכל יחידת חריגה"
+              value={s.penalty.perExcess}
+              onSave={(v) => updatePenaltyRule(cat, { perExcess: v })}
+              valueClassName="font-extrabold text-rose-300"
             />
-            {s.penalty.mode === 'multiplier' ? (
-              <span className="flex items-center gap-1 text-xs text-zinc-400">
-                כל חריגה ×
-                <InlineNumber
-                  label="מכפיל קנס"
-                  value={s.penalty.multiplier}
-                  step={0.5}
-                  onSave={(v) => updatePenaltyRule(cat, { multiplier: v })}
-                />
-                <span className="text-zinc-500">(מעוגל למעלה)</span>
-              </span>
-            ) : (
-              <span className="flex items-center gap-1 text-xs text-zinc-400">
-                קנס של
-                <InlineNumber
-                  label="קנס קבוע"
-                  value={s.penalty.fixedAmount}
-                  onSave={(v) => updatePenaltyRule(cat, { fixedAmount: Math.round(v) })}
-                />
-                {meta.label}
-              </span>
-            )}
+            מהחודש הבא
+          </div>
+          <div className="mt-1.5 text-[11px] text-zinc-500">
+            נשמר כחוק הקבוע לכל החודשים. דוגמה: חריגה של 2 = קנס של {formatNum(Math.ceil(2 * s.penalty.perExcess - 1e-9))}
+            {Number.isInteger(s.penalty.perExcess) ? '' : ' (מעוגל למעלה)'}.
           </div>
           {ledgerRow ? (
             <div className="mt-3 flex items-center gap-2 rounded-xl bg-zinc-950/60 px-3 py-2 text-xs text-zinc-400">

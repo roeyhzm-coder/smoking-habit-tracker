@@ -2,12 +2,13 @@ import type { ReactNode } from 'react';
 import { Calculator, Settings2 } from 'lucide-react';
 import type { CategoryId, CategorySettings } from '../../types';
 import { CATEGORY_META } from '../../lib/categories';
-import { describeRule, formatNum, penaltyFromRule, type CategoryStatus, type MonthCategoryLedger } from '../../lib/calc';
+import { formatNum, penaltyFromRule, type CategoryStatus, type MonthCategoryLedger } from '../../lib/calc';
 import { monthNameOnly, shiftMonthKey } from '../../lib/dates';
 import { useStore } from '../../store/store';
 import { useUi } from '../../store/ui';
 import { Accordion } from '../ui/Accordion';
 import { InlineNumber } from '../ui/InlineNumber';
+import { OptionalNumberInput } from '../ui/OptionalNumberInput';
 
 function Row({ label, hint, children }: { label: string; hint?: ReactNode; children: ReactNode }) {
   return (
@@ -110,40 +111,13 @@ export function BudgetBreakdown({ category, settings, row, status }: Props) {
           </div>
         ) : null}
 
-        <Row label="חוק קנס" hint={describeRule(rule, meta.singular)}>
-          <div className="flex flex-col items-end gap-1.5">
-            <div className="inline-flex rounded-lg border border-white/10 p-0.5 text-xs">
-              {(['multiplier', 'fixed'] as const).map((m) => (
-                <button
-                  key={m}
-                  type="button"
-                  onClick={() => updatePenaltyRule(category, { mode: m })}
-                  aria-pressed={rule.mode === m}
-                  className={`rounded-md px-2 py-1 font-semibold ${
-                    rule.mode === m ? 'bg-zinc-100 text-zinc-950' : 'text-zinc-400 hover:text-zinc-100'
-                  }`}
-                >
-                  {m === 'multiplier' ? 'מכפיל' : 'קבוע'}
-                </button>
-              ))}
-            </div>
-            {rule.mode === 'multiplier' ? (
-              <InlineNumber
-                label="מכפיל קנס"
-                value={rule.multiplier}
-                step={0.5}
-                suffix="×"
-                onSave={(v) => updatePenaltyRule(category, { multiplier: v })}
-              />
-            ) : (
-              <InlineNumber
-                label="קנס קבוע"
-                value={rule.fixedAmount}
-                suffix={meta.label}
-                onSave={(v) => updatePenaltyRule(category, { fixedAmount: Math.round(v) })}
-              />
-            )}
-          </div>
+        <Row label="קנס על חריגה" hint="על כל חריגה מהתקציב, הורד X מהחודש הבא (חוק קבוע)">
+          <InlineNumber
+            label="קנס לכל יחידת חריגה"
+            value={rule.perExcess}
+            onSave={(v) => updatePenaltyRule(category, { perExcess: v })}
+            suffix="לכל חריגה"
+          />
         </Row>
 
         <Row label="תקציב אפקטיבי לחודש" hint="בסיס פחות קנס">
@@ -179,16 +153,12 @@ export function BudgetBreakdown({ category, settings, row, status }: Props) {
           />
         </Row>
 
-        <Row label="מגבלה שבועית">
-          <label className="inline-flex cursor-pointer items-center gap-2 text-xs text-zinc-400">
-            {settings.weeklyEnabled ? 'פעילה' : 'כבויה'}
-            <input
-              type="checkbox"
-              checked={settings.weeklyEnabled}
-              onChange={(e) => updateSettings(category, { weeklyEnabled: e.target.checked })}
-              className="size-4 accent-sky-500"
-            />
-          </label>
+        <Row label="מגבלה שבועית (רשות)" hint="ריק או 0 = ללא מגבלה">
+          <OptionalNumberInput
+            label="מגבלה שבועית"
+            value={settings.weeklyLimit}
+            onCommit={(v) => updateSettings(category, { weeklyLimit: v })}
+          />
         </Row>
       </div>
       <button

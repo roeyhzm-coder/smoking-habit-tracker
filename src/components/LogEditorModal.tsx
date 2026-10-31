@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { CalendarClock, Trash2 } from 'lucide-react';
 import type { CategoryId } from '../types';
-import { CATEGORY_IDS, CATEGORY_META } from '../lib/categories';
+import { CATEGORY_DISPLAY_ORDER, CATEGORY_META, CategoryIcon } from '../lib/categories';
 import { combineDateTime, toDateInput, toTimeInput } from '../lib/dates';
 import { useStore } from '../store/store';
 import { describeEntryShort, useUi } from '../store/ui';
@@ -93,19 +93,20 @@ export function LogEditorModal() {
         <fieldset>
           <legend className="mb-2 text-xs font-semibold text-zinc-400">קטגוריה</legend>
           <div className="grid grid-cols-3 gap-2">
-            {CATEGORY_IDS.map((c) => (
+            {CATEGORY_DISPLAY_ORDER.map((c) => (
               <button
                 key={c}
                 type="button"
                 onClick={() => setCategory(c)}
                 aria-pressed={category === c}
-                className={`rounded-xl border px-2 py-2.5 text-sm font-semibold transition-colors ${
+                className={`flex items-center justify-center gap-1.5 rounded-xl border px-2 py-2.5 text-sm font-semibold transition-colors ${
                   category === c
                     ? 'border-sky-500/60 bg-sky-500/15 text-sky-200'
                     : 'border-white/10 bg-zinc-950 text-zinc-300 hover:bg-white/5'
                 }`}
               >
-                {CATEGORY_META[c].emoji} {CATEGORY_META[c].singular}
+                <CategoryIcon category={c} className="size-4" />
+                {CATEGORY_META[c].singular}
               </button>
             ))}
           </div>

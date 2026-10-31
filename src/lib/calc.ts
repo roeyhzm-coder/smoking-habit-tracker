@@ -1,5 +1,5 @@
 import type { AppData, CategoryId, CategorySettings, LogEntry, PenaltyRule, StatusLevel } from '../types';
-import { CATEGORY_IDS } from './categories';
+import { CATEGORY_IDS, weeklyLimitOf } from './categories';
 import { dayKeyOf, daysInMonthKey, monthKeyOf, parseMonthKey, shiftMonthKey, weekRange } from './dates';
 
 export type MonthResult = 'met' | 'exact' | 'over';
@@ -29,13 +29,11 @@ export type Ledger = Record<string, Record<CategoryId, MonthCategoryLedger>>;
 
 export function penaltyFromRule(rule: PenaltyRule, excess: number): number {
   if (excess <= 0) return 0;
-  if (rule.mode === 'fixed') return Math.max(0, rule.fixedAmount);
-  return Math.max(0, Math.ceil(excess * rule.multiplier - 1e-9));
+  return Math.max(0, Math.ceil(excess * rule.perExcess - 1e-9));
 }
 
-export function describeRule(rule: PenaltyRule, singular: string): string {
-  if (rule.mode === 'fixed') return `קנס קבוע: ${rule.fixedAmount} בכל חודש עם חריגה`;
-  return `כל ${singular} חריגה = ${rule.multiplier} פחות בחודש הבא`;
+export function describeRule(rule: PenaltyRule): string {
+  return `על כל חריגה מהתקציב, יורדו ${formatNum(rule.perExcess)} מהחודש הבא`;
 }
 
 function readOverride(map: AppData['penaltyOverrides'], key: string, cat: CategoryId): number | undefined {
@@ -188,18 +186,19 @@ export function computeStatus(
     if (l.timestamp >= weekStart.getTime() && l.timestamp <= weekEnd.getTime()) weekCount += 1;
   }
   const remaining = effective - used;
+  const weeklyLimit = weeklyLimitOf(settings);
   const dailyExceeded = settings.focus === 'daily' && todayCount > daily.value + 1e-9;
   const withinPace = used <= allowedUntilToday + 1e-9;
 
   // ---- Weekly indicator ----
   let weekly: CategoryStatus['weekly'] = null;
-  if (settings.weeklyEnabled) {
-    if (weekCount > settings.weeklyLimit) {
-      weekly = { level: 'bad', text: `חריגה מהתקציב השבועי (${weekCount}/${settings.weeklyLimit})` };
-    } else if (weekCount === settings.weeklyLimit) {
-      weekly = { level: 'warning', text: `ניצלת את המכסה השבועית (${weekCount}/${settings.weeklyLimit})` };
+  if (weeklyLimit !== null) {
+    if (weekCount > weeklyLimit) {
+      weekly = { level: 'bad', text: `חריגה מהתקציב השבועי (${weekCount}/${weeklyLimit})` };
+    } else if (weekCount === weeklyLimit) {
+      weekly = { level: 'exact', text: `בדיוק ביעד השבועי (${weekCount}/${weeklyLimit})` };
     } else {
-      weekly = { level: 'good', text: `בתוך התקציב השבועי (${weekCount}/${settings.weeklyLimit})` };
+      weekly = { level: 'good', text: `בתוך התקציב השבועי (${weekCount}/${weeklyLimit})` };
     }
   }
 
@@ -211,7 +210,7 @@ export function computeStatus(
       text: `חריגה מהתקציב היומי (${todayCount}/${formatNum(daily.value)})`,
     };
   } else if (todayCount > 0 && Math.abs(todayCount - daily.value) < 1e-9) {
-    dailyInd = { level: 'warning', text: `בדיוק בתקציב היומי (${todayCount}/${formatNum(daily.value)})` };
+    dailyInd = { level: 'exact', text: `בדיוק בתקציב היומי (${todayCount}/${formatNum(daily.value)})` };
   } else {
     dailyInd = { level: 'good', text: `בתוך התקציב היומי (${todayCount}/${formatNum(daily.value)})` };
   }
@@ -231,9 +230,9 @@ export function computeStatus(
     headline = 'חריגה מהתקציב השבועי';
     general = { level: 'warning', text: 'החודש עדיין בתקציב, אבל השבוע חרגת' };
   } else if (used === effective && effective > 0) {
-    level = 'warning';
-    headline = 'בדיוק על הגבול החודשי';
-    general = { level: 'warning', text: 'ניצלת את כל התקציב החודשי — כל יחידה נוספת היא חריגה' };
+    level = 'exact';
+    headline = 'בדיוק ביעד החודשי';
+    general = { level: 'exact', text: 'ניצלת בדיוק את התקציב החודשי — כל יחידה נוספת היא חריגה' };
   } else if (effective === 0 && used === 0) {
     level = 'good';
     headline = 'חודש נקי';
@@ -253,9 +252,9 @@ export function computeStatus(
     level = 'warning';
     headline = 'חריגה יומית — מכוסה מהבנק';
     general = { level: 'good', text: 'המצב הכללי בסדר גמור (בזכות ימים נקיים קודמים)' };
-  } else if (weekly?.level === 'warning') {
-    level = 'warning';
-    headline = 'המכסה השבועית נוצלה';
+  } else if (weekly?.level === 'exact') {
+    level = 'exact';
+    headline = 'בדיוק ביעד השבועי';
     general = { level: 'good', text: 'המצב החודשי תקין — שמור על השבוע' };
   } else {
     level = 'good';
@@ -291,7 +290,7 @@ export function computeStatus(
   };
 }
 
-export const LEVEL_RANK: Record<StatusLevel, number> = { good: 0, warning: 1, bad: 2 };
+export const LEVEL_RANK: Record<StatusLevel, number> = { good: 0, exact: 1, warning: 2, bad: 3 };
 
 export function worstLevel(levels: StatusLevel[]): StatusLevel {
   return levels.reduce<StatusLevel>((acc, l) => (LEVEL_RANK[l] > LEVEL_RANK[acc] ? l : acc), 'good');
@@ -344,15 +343,16 @@ export function buildMonthDays(data: AppData, ledger: Ledger, monthKey: string, 
       const daily = dailyBudgetFor(settings, effective, days).value;
       const allowed = (effective / days) * d;
       const cum = cumulative[cat];
+      const wkLimit = weeklyLimitOf(settings);
       let lvl: StatusLevel = 'good';
       if (cum > effective) lvl = 'bad';
-      else if (settings.weeklyEnabled) {
+      else if (wkLimit !== null) {
         const { start } = weekRange(date);
         const endOfDay = date.getTime() + 86_399_999;
         const wk = allByCat[cat].filter((t) => t >= start.getTime() && t <= endOfDay).length;
-        if (wk > settings.weeklyLimit) lvl = 'bad';
-        else if (cum === effective || wk === settings.weeklyLimit) lvl = 'warning';
-      } else if (cum === effective) lvl = 'warning';
+        if (wk > wkLimit) lvl = 'bad';
+        else if (cum === effective || wk === wkLimit) lvl = 'exact';
+      } else if (cum === effective) lvl = 'exact';
       if (lvl === 'good' && settings.focus === 'daily' && (c > daily + 1e-9 || cum > allowed + 1e-9)) {
         lvl = 'warning';
       }
@@ -370,7 +370,7 @@ export function buildMonthDays(data: AppData, ledger: Ledger, monthKey: string, 
 }
 
 export function resultLevel(r: MonthResult): StatusLevel {
-  return r === 'over' ? 'bad' : r === 'exact' ? 'warning' : 'good';
+  return r === 'over' ? 'bad' : r === 'exact' ? 'exact' : 'good';
 }
 
 export const RESULT_LABEL: Record<MonthResult, string> = {

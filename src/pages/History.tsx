@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { CalendarDays, ChevronDown } from 'lucide-react';
 import type { AppData, CategoryId } from '../types';
-import { CATEGORY_IDS, CATEGORY_META, STATUS_STYLES } from '../lib/categories';
+import { CATEGORY_DISPLAY_ORDER, CATEGORY_IDS, CATEGORY_META, CategoryIcon, STATUS_STYLES } from '../lib/categories';
 import { RESULT_LABEL, formatNum, resultLevel, type Ledger, type MonthCategoryLedger } from '../lib/calc';
 import { monthKeyOf, monthLabel, monthNameOnly, parseMonthKey, shiftMonthKey } from '../lib/dates';
 import { useAppData, useLedger } from '../store/hooks';
@@ -40,6 +40,7 @@ function CategoryBreakdown({ row, settingsLimit }: { row: MonthCategoryLedger; s
     <div className={`rounded-2xl border ${st.border} bg-zinc-950/40 p-3`}>
       <div className="mb-2 flex items-center gap-2">
         <span className={`size-2 rounded-full ${st.dot}`} />
+        <CategoryIcon category={cat} className="size-4" />
         <h4 className="text-sm font-bold text-zinc-100">{CATEGORY_META[cat].label}</h4>
         <span className={`ms-auto text-xs font-semibold ${st.text}`}>{RESULT_LABEL[row.result]}</span>
       </div>
@@ -116,7 +117,7 @@ function MonthRow({
           <span className="rounded-full bg-sky-500/15 px-2 py-0.5 text-[10px] font-semibold text-sky-300">בתהליך</span>
         ) : null}
         <span className="ms-auto flex flex-wrap items-center gap-1">
-          {CATEGORY_IDS.map((c) => (
+          {CATEGORY_DISPLAY_ORDER.map((c) => (
             <ResultBadge key={c} row={row[c]} inProgress={inProgress} />
           ))}
         </span>
@@ -131,7 +132,7 @@ function MonthRow({
           {open ? (
             <div className="space-y-3 border-t border-white/6 px-3 pt-3 pb-4">
               <div className="grid gap-2 sm:grid-cols-3">
-                {CATEGORY_IDS.map((c) => (
+                {CATEGORY_DISPLAY_ORDER.map((c) => (
                   <CategoryBreakdown key={c} row={row[c]} settingsLimit={data.settings[c].monthlyLimit} />
                 ))}
               </div>
@@ -192,9 +193,12 @@ export function History({ now }: { now: Date }) {
       </div>
 
       <div className="grid grid-cols-3 gap-2">
-        {CATEGORY_IDS.map((c) => (
+        {CATEGORY_DISPLAY_ORDER.map((c) => (
           <div key={c} className="rounded-2xl border border-white/8 bg-zinc-900/60 px-3 py-2">
-            <div className="text-xs font-semibold text-zinc-400">{CATEGORY_META[c].label}</div>
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-400">
+              <CategoryIcon category={c} className="size-3.5" />
+              {CATEGORY_META[c].label}
+            </div>
             <div className="mt-0.5 text-xs text-zinc-300">
               <span className="font-bold text-emerald-300 tabular-nums">{totals[c].met}</span> בתקציב ·{' '}
               <span className="font-bold text-rose-300 tabular-nums">{totals[c].over}</span> חריגה

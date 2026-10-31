@@ -45,11 +45,16 @@ function num(v: unknown, fallback: number): number {
 
 function sanitizePenalty(v: unknown, fb: PenaltyRule): PenaltyRule {
   if (!isRecord(v)) return { ...fb };
-  return {
-    mode: v.mode === 'fixed' ? 'fixed' : 'multiplier',
-    multiplier: Math.max(0, num(v.multiplier, fb.multiplier)),
-    fixedAmount: Math.max(0, num(v.fixedAmount, fb.fixedAmount)),
-  };
+  // v1 stored { mode, multiplier, fixedAmount } — the multiplier carries over as "per excess unit".
+  return { perExcess: Math.max(0, num(v.perExcess, num(v.multiplier, fb.perExcess))) };
+}
+
+function sanitizeWeekly(s: Record<string, unknown>, fb: number | null): number | null {
+  // v1 had an explicit on/off toggle; a disabled limit becomes "no limit".
+  if (s.weeklyEnabled === false) return null;
+  if (s.weeklyLimit === null) return null;
+  const n = num(s.weeklyLimit, fb ?? 0);
+  return n > 0 ? Math.round(n) : null;
 }
 
 function sanitizeSettings(v: unknown): Record<CategoryId, CategorySettings> {
@@ -61,8 +66,7 @@ function sanitizeSettings(v: unknown): Record<CategoryId, CategorySettings> {
     const fb = DEFAULT_SETTINGS[cat];
     out[cat] = {
       monthlyLimit: Math.max(0, num(s.monthlyLimit, fb.monthlyLimit)),
-      weeklyEnabled: typeof s.weeklyEnabled === 'boolean' ? s.weeklyEnabled : fb.weeklyEnabled,
-      weeklyLimit: Math.max(0, num(s.weeklyLimit, fb.weeklyLimit)),
+      weeklyLimit: sanitizeWeekly(s, fb.weeklyLimit),
       dailyOverride:
         s.dailyOverride === null ? null : typeof s.dailyOverride === 'number' ? Math.max(0, s.dailyOverride) : fb.dailyOverride,
       focus: s.focus === 'daily' || s.focus === 'weekly' || s.focus === 'monthly' ? s.focus : fb.focus,
@@ -109,7 +113,7 @@ function sanitizeLogs(v: unknown): LogEntry[] {
 export function sanitizeData(raw: unknown): AppData {
   if (!isRecord(raw)) throw new Error('קובץ לא תקין');
   return {
-    version: 1,
+    version: 2,
     settings: sanitizeSettings(raw.settings),
     logs: sanitizeLogs(raw.logs),
     penaltyOverrides: sanitizeOverrides(raw.penaltyOverrides),
@@ -217,10 +221,11 @@ export const useStore = create<Store>()(
     }),
     {
       name: STORAGE_KEY,
-      version: 1,
+      version: 2,
+      migrate: (persisted) => persisted as AppData,
       storage: createJSONStorage(() => localStorage),
       partialize: (s): AppData => ({
-        version: 1,
+        version: 2,
         settings: s.settings,
         logs: s.logs,
         penaltyOverrides: s.penaltyOverrides,
@@ -239,7 +244,7 @@ export const useStore = create<Store>()(
 
 export function selectData(s: Store): AppData {
   return {
-    version: 1,
+    version: 2,
     settings: s.settings,
     logs: s.logs,
     penaltyOverrides: s.penaltyOverrides,

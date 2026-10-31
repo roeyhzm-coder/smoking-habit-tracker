@@ -6,6 +6,7 @@ import { useUi } from '../../store/ui';
 
 const LEVEL_CELL = {
   good: 'border-emerald-500/40 bg-emerald-500/10',
+  exact: 'border-blue-500/60 bg-blue-500/15',
   warning: 'border-amber-500/50 bg-amber-500/12',
   bad: 'border-rose-500/50 bg-rose-500/15',
 } as const;
@@ -69,8 +70,12 @@ export function MonthCalendar({ data, ledger, monthKey, now }: { data: AppData; 
           נקי/בתקציב
         </span>
         <span className="inline-flex items-center gap-1">
+          <span className="size-2 rounded-sm bg-blue-500" />
+          בדיוק ביעד
+        </span>
+        <span className="inline-flex items-center gap-1">
           <span className="size-2 rounded-sm bg-amber-400" />
-          בדיוק/בנק
+          חריגה יומית/קצב
         </span>
         <span className="inline-flex items-center gap-1">
           <span className="size-2 rounded-sm bg-rose-400" />

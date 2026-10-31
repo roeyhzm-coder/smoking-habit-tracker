@@ -1,12 +1,14 @@
-import { AlertTriangle, CheckCircle2, OctagonAlert } from 'lucide-react';
+import { getDaysInMonth } from 'date-fns';
+import { AlertTriangle, CheckCircle2, OctagonAlert, Target } from 'lucide-react';
 import type { CategorySettings, StatusLevel } from '../../types';
-import { CATEGORY_META, STATUS_LABEL, STATUS_STYLES } from '../../lib/categories';
+import { CATEGORY_META, CategoryIcon, STATUS_LABEL, STATUS_STYLES } from '../../lib/categories';
 import { formatNum, type CategoryStatus } from '../../lib/calc';
 import { useStore } from '../../store/store';
 import { InlineNumber } from '../ui/InlineNumber';
 
 const LEVEL_ICON: Record<StatusLevel, typeof CheckCircle2> = {
   good: CheckCircle2,
+  exact: Target,
   warning: AlertTriangle,
   bad: OctagonAlert,
 };
@@ -25,13 +27,22 @@ function Indicator({ level, label, text }: { level: StatusLevel; label: string; 
   );
 }
 
-export function StatusHero({ status, settings }: { status: CategoryStatus; settings: CategorySettings }) {
+/** "היום ה-X לחודש (נותרו Y ימים לסוף החודש)" — Y counts the days after today. */
+export function monthProgressText(now: Date): string {
+  const day = now.getDate();
+  const left = getDaysInMonth(now) - day;
+  const tail =
+    left === 0 ? 'היום האחרון של החודש' : left === 1 ? 'נותר יום אחד לסוף החודש' : `נותרו ${left} ימים לסוף החודש`;
+  return `היום ה-${day} לחודש (${tail})`;
+}
+
+export function StatusHero({ status, settings, now }: { status: CategoryStatus; settings: CategorySettings; now: Date }) {
   const updateSettings = useStore((s) => s.updateSettings);
   const st = STATUS_STYLES[status.level];
   const meta = CATEGORY_META[status.category];
   const usedPct = status.effective > 0 ? Math.min(100, (status.used / status.effective) * 100) : status.used > 0 ? 100 : 0;
   const pacePct = status.effective > 0 ? Math.min(100, (status.allowedUntilToday / status.effective) * 100) : 0;
-  const barColor = status.level === 'good' ? 'bg-emerald-400' : status.level === 'warning' ? 'bg-amber-400' : 'bg-rose-500';
+  const barColor = st.bar;
 
   return (
     <section
@@ -40,11 +51,13 @@ export function StatusHero({ status, settings }: { status: CategoryStatus; setti
       <div className="flex items-center gap-2">
         <span className={`size-2.5 rounded-full ${st.dot}`} />
         <span className={`text-xs font-bold tracking-wide ${st.text}`}>{STATUS_LABEL[status.level]}</span>
-        <span className="ms-auto text-xs text-zinc-500">
-          יום {status.dayOfMonth} מתוך {status.daysInMonth}
+        <span className="ms-auto inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-400">
+          <CategoryIcon category={status.category} className="size-4" />
+          {meta.label}
         </span>
       </div>
       <h2 className="mt-1 text-2xl font-extrabold text-zinc-50">{status.headline}</h2>
+      <p className="mt-0.5 text-sm text-zinc-400">{monthProgressText(now)}</p>
 
       <div className="mt-4 grid grid-cols-3 gap-2 text-center">
         <div className="rounded-2xl bg-black/25 px-2 py-3">

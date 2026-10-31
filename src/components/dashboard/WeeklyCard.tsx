@@ -1,6 +1,6 @@
 import { CalendarRange } from 'lucide-react';
 import type { CategorySettings } from '../../types';
-import { STATUS_STYLES } from '../../lib/categories';
+import { STATUS_STYLES, weeklyLimitOf } from '../../lib/categories';
 import type { CategoryStatus } from '../../lib/calc';
 import { formatDayMonth } from '../../lib/dates';
 import { useStore } from '../../store/store';
@@ -16,9 +16,9 @@ interface Props {
 export function WeeklyCard({ status, settings, prominent }: Props) {
   const updateSettings = useStore((s) => s.updateSettings);
   const weekly = status.weekly;
-  if (!settings.weeklyEnabled || !weekly) return null;
+  const limit = weeklyLimitOf(settings);
+  if (limit === null || !weekly) return null;
   const st = STATUS_STYLES[weekly.level];
-  const limit = settings.weeklyLimit;
   const slots = Math.max(limit, status.weekCount);
   const range = `${formatDayMonth(status.weekStart)}–${formatDayMonth(status.weekEnd)}`;
 
@@ -26,7 +26,7 @@ export function WeeklyCard({ status, settings, prominent }: Props) {
     <InlineNumber
       label="תקציב שבועי"
       value={limit}
-      onSave={(v) => updateSettings(status.category, { weeklyLimit: Math.round(v) })}
+      onSave={(v) => updateSettings(status.category, { weeklyLimit: Math.round(v) > 0 ? Math.round(v) : null })}
       suffix="לשבוע"
     />
   );
@@ -62,7 +62,7 @@ export function WeeklyCard({ status, settings, prominent }: Props) {
               className={`size-3.5 rounded-full border ${
                 i < status.weekCount
                   ? i < limit
-                    ? 'border-amber-300/60 bg-amber-400'
+                    ? 'border-blue-300/60 bg-blue-500'
                     : 'border-rose-300/60 bg-rose-500'
                   : 'border-emerald-400/50 bg-emerald-400/15'
               }`}

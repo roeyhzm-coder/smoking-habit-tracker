@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { ListChecks } from 'lucide-react';
 import type { CategoryId } from '../types';
-import { CATEGORY_IDS, CATEGORY_META } from '../lib/categories';
+import { CATEGORY_IDS, CATEGORY_META, weeklyLimitOf } from '../lib/categories';
 import { computeStatus, type CategoryStatus } from '../lib/calc';
 import { dayKeyOf, monthKeyOf } from '../lib/dates';
 import { useAppData, useLedger } from '../store/hooks';
@@ -42,9 +42,9 @@ export function Dashboard({ now }: { now: Date }) {
       <SummaryBar statuses={statuses} active={active} onSelect={setActive} />
       <CategoryTabs active={active} onSelect={setActive} />
 
-      <StatusHero status={status} settings={settings} />
+      <StatusHero status={status} settings={settings} now={now} />
 
-      {settings.weeklyEnabled ? (
+      {weeklyLimitOf(settings) !== null ? (
         <WeeklyCard status={status} settings={settings} prominent={settings.focus === 'weekly'} />
       ) : null}
 

@@ -83,7 +83,7 @@ function LogRow({ log, showCategory }: { log: LogEntry; showCategory: boolean })
         >
           {CATEGORY_IDS.map((c) => (
             <option key={c} value={c}>
-              {CATEGORY_META[c].emoji} {CATEGORY_META[c].singular}
+              {CATEGORY_META[c].singular}
             </option>
           ))}
         </select>

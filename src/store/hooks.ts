@@ -24,7 +24,7 @@ export function useNow(intervalMs = 30_000): Date {
 export function useAppData(): AppData {
   return useStore(
     useShallow((s) => ({
-      version: 1 as const,
+      version: 2 as const,
       settings: s.settings,
       logs: s.logs,
       penaltyOverrides: s.penaltyOverrides,
