@@ -27,7 +27,7 @@ export default function App() {
 
   return (
     <div className="min-h-dvh bg-zinc-950 bg-[radial-gradient(ellipse_at_top,rgba(56,189,248,0.07),transparent_60%)]">
-      <header className="sticky top-0 z-40 border-b border-white/6 bg-zinc-950/80 backdrop-blur-lg">
+      <header className="sticky top-0 z-40 border-b border-white/6 bg-zinc-950/80 pt-[env(safe-area-inset-top)] backdrop-blur-lg">
         <div className="mx-auto flex max-w-lg items-center gap-3 px-4 py-3">
           <div className="flex-1">
             <div className="text-base font-extrabold text-zinc-50">מעקב תקציב עישון</div>
