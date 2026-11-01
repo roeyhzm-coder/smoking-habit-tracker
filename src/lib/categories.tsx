@@ -7,9 +7,9 @@ export { CATEGORY_IDS } from '../types';
 /**
  * Visual order for side-by-side category controls. The app is RTL, so the
  * FIRST item renders on the RIGHT. Reversed so that, visually left → right,
- * the order reads: סיגריות · פייסלים · סיגרים.
+ * the order reads: סיגריות · סיגרים · פייסלים (right = פייסלים).
  */
-export const CATEGORY_DISPLAY_ORDER: readonly CategoryId[] = ['cigars', 'joints', 'cigarettes'] as const;
+export const CATEGORY_DISPLAY_ORDER: readonly CategoryId[] = ['joints', 'cigars', 'cigarettes'] as const;
 
 export interface CategoryMeta {
   id: CategoryId;

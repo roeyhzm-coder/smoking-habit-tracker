@@ -111,7 +111,7 @@ export function BudgetBreakdown({ category, settings, row, status }: Props) {
           </div>
         ) : null}
 
-        <Row label="קנס על חריגה" hint="על כל חריגה מהתקציב, הורד X מהחודש הבא (חוק קבוע)">
+        <Row label="קנס על חריגה" hint="על כל חריגה, הורד X מהתקציב בחודש הבא (חוק קבוע)">
           <InlineNumber
             label="קנס לכל יחידת חריגה"
             value={rule.perExcess}
@@ -120,7 +120,7 @@ export function BudgetBreakdown({ category, settings, row, status }: Props) {
           />
         </Row>
 
-        <Row label="תקציב אפקטיבי לחודש" hint="בסיס פחות קנס">
+        <Row label="תקציב מעודכן לחודש" hint="תקציב בסיס פחות קנס">
           <span className="font-extrabold tabular-nums text-zinc-50">{formatNum(row.effective)}</span>
         </Row>
 

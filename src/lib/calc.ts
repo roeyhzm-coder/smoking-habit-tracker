@@ -33,7 +33,7 @@ export function penaltyFromRule(rule: PenaltyRule, excess: number): number {
 }
 
 export function describeRule(rule: PenaltyRule): string {
-  return `על כל חריגה מהתקציב, יורדו ${formatNum(rule.perExcess)} מהחודש הבא`;
+  return `על כל חריגה, יורדו ${formatNum(rule.perExcess)} מהתקציב בחודש הבא`;
 }
 
 function readOverride(map: AppData['penaltyOverrides'], key: string, cat: CategoryId): number | undefined {
@@ -305,8 +305,18 @@ export interface DayCell {
   isFuture: boolean;
 }
 
-/** Builds calendar day cells for a month with per-day color coding. */
-export function buildMonthDays(data: AppData, ledger: Ledger, monthKey: string, now: Date): DayCell[] {
+/**
+ * Builds calendar day cells for a month with per-day color coding.
+ * Pass `only` to color days by a single category (counts still cover all).
+ */
+export function buildMonthDays(
+  data: AppData,
+  ledger: Ledger,
+  monthKey: string,
+  now: Date,
+  only?: CategoryId,
+): DayCell[] {
+  const cats: readonly CategoryId[] = only ? [only] : CATEGORY_IDS;
   const days = daysInMonthKey(monthKey);
   const { year, month } = parseMonthKey(monthKey);
   const perDay = new Map<string, Record<CategoryId, number>>();
@@ -332,7 +342,7 @@ export function buildMonthDays(data: AppData, ledger: Ledger, monthKey: string, 
     const counts = perDay.get(dayKey) ?? { cigarettes: 0, joints: 0, cigars: 0 };
     const levels: StatusLevel[] = [];
     let any = false;
-    for (const cat of CATEGORY_IDS) {
+    for (const cat of cats) {
       const c = counts[cat];
       cumulative[cat] += c;
       if (c === 0) continue;

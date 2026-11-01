@@ -61,7 +61,7 @@ export function StatusHero({ status, settings, now }: { status: CategoryStatus; 
 
       <div className="mt-4 grid grid-cols-3 gap-2 text-center">
         <div className="rounded-2xl bg-black/25 px-2 py-3">
-          <div className="text-[11px] font-semibold text-zinc-400">תקציב אפקטיבי</div>
+          <div className="text-[11px] font-semibold text-zinc-400">מותר החודש</div>
           <div className="mt-1 text-2xl font-extrabold tabular-nums text-zinc-50">{formatNum(status.effective)}</div>
         </div>
         <div className="rounded-2xl bg-black/25 px-2 py-3">

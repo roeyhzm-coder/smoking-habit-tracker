@@ -141,7 +141,7 @@ export function SettingsModal({ now }: { now: Date }) {
       </div>
 
       <div className="divide-y divide-white/6">
-        <Field label="תקציב חודשי" hint="ברירת המחדל לכל חודש (ניתן לשנות לחודש בודד מההיסטוריה)">
+        <Field label="תקציב חודשי" hint="ברירת המחדל לכל חודש">
           <InlineNumber
             label="תקציב חודשי"
             value={s.monthlyLimit}
@@ -150,7 +150,7 @@ export function SettingsModal({ now }: { now: Date }) {
           />
         </Field>
 
-        <Field label="מגבלה שבועית (רשות)" hint="השאר ריק או 0 = ללא מגבלה שבועית · שבוע מתחיל ביום ראשון">
+        <Field label="מגבלה שבועית (השאר ריק או 0 לביטול)" hint="שבוע מתחיל ביום ראשון">
           <span className="flex items-center gap-1.5 text-xs text-zinc-400">
             <OptionalNumberInput
               label="מגבלה שבועית"
@@ -163,7 +163,7 @@ export function SettingsModal({ now }: { now: Date }) {
 
         <Field
           label="תקציב יומי"
-          hint={s.dailyOverride === null ? `אוטומטי: אפקטיבי ÷ ימים בחודש = ${formatNum(autoDaily)}` : 'ערך ידני'}
+          hint={s.dailyOverride === null ? `אוטומטי: תקציב מעודכן ÷ ימים בחודש = ${formatNum(autoDaily)}` : 'ערך ידני'}
         >
           <div className="flex flex-col items-end gap-1.5">
             <Segmented
@@ -198,14 +198,14 @@ export function SettingsModal({ now }: { now: Date }) {
         <div className="py-3">
           <div className="text-sm font-semibold text-zinc-200">קנס על חריגה</div>
           <div className="mt-2 flex flex-wrap items-center gap-1.5 rounded-xl border border-white/8 bg-zinc-950/60 px-3 py-2.5 text-sm text-zinc-300">
-            על כל חריגה מהתקציב, הורד
+            על כל חריגה, הורד
             <InlineNumber
               label="קנס לכל יחידת חריגה"
               value={s.penalty.perExcess}
               onSave={(v) => updatePenaltyRule(cat, { perExcess: v })}
               valueClassName="font-extrabold text-rose-300"
             />
-            מהחודש הבא
+            מהתקציב בחודש הבא
           </div>
           <div className="mt-1.5 text-[11px] text-zinc-500">
             נשמר כחוק הקבוע לכל החודשים. דוגמה: חריגה של 2 = קנס של {formatNum(Math.ceil(2 * s.penalty.perExcess - 1e-9))}
