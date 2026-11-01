@@ -1,5 +1,5 @@
 import type { CategoryId } from '../../types';
-import { CATEGORY_DISPLAY_ORDER, CATEGORY_META, CategoryIcon, STATUS_LABEL, STATUS_STYLES } from '../../lib/categories';
+import { CATEGORY_ORDER_LTR, CATEGORY_META, CategoryIcon, STATUS_LABEL, STATUS_STYLES } from '../../lib/categories';
 import type { CategoryStatus } from '../../lib/calc';
 
 interface Props {
@@ -10,14 +10,15 @@ interface Props {
 
 export function SummaryBar({ statuses, active, onSelect }: Props) {
   return (
-    <div className="grid grid-cols-3 gap-2">
-      {CATEGORY_DISPLAY_ORDER.map((cat) => {
+    <div dir="ltr" className="grid grid-cols-3 gap-2">
+      {CATEGORY_ORDER_LTR.map((cat) => {
         const s = statuses[cat];
         const st = STATUS_STYLES[s.level];
         const isActive = cat === active;
         return (
           <button
             key={cat}
+            dir="rtl"
             type="button"
             onClick={() => onSelect(cat)}
             aria-pressed={isActive}
@@ -44,12 +45,13 @@ export function SummaryBar({ statuses, active, onSelect }: Props) {
 
 export function CategoryTabs({ active, onSelect }: { active: CategoryId; onSelect: (c: CategoryId) => void }) {
   return (
-    <div role="tablist" aria-label="קטגוריה" className="grid grid-cols-3 gap-1 rounded-2xl border border-white/8 bg-zinc-900/80 p-1">
-      {CATEGORY_DISPLAY_ORDER.map((cat) => {
+    <div dir="ltr" role="tablist" aria-label="קטגוריה" className="grid grid-cols-3 gap-1 rounded-2xl border border-white/8 bg-zinc-900/80 p-1">
+      {CATEGORY_ORDER_LTR.map((cat) => {
         const isActive = cat === active;
         return (
           <button
             key={cat}
+            dir="rtl"
             role="tab"
             type="button"
             aria-selected={isActive}

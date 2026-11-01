@@ -5,11 +5,13 @@ import { CigarIcon, CigaretteIcon, JointIcon, type IconProps } from '../componen
 export { CATEGORY_IDS } from '../types';
 
 /**
- * Visual order for side-by-side category controls. The app is RTL, so the
- * FIRST item renders on the RIGHT. Reversed so that, visually left → right,
- * the order reads: סיגריות · סיגרים · פייסלים (right = פייסלים).
+ * Exact on-screen order of side-by-side category controls, LEFT → RIGHT:
+ * סיגריות (left) · סיגרים (middle) · פייסלים (right).
+ * Containers rendering this list MUST set dir="ltr" so the visual order is
+ * guaranteed regardless of the page's RTL direction (each item sets dir="rtl"
+ * internally to keep Hebrew icon/label flow).
  */
-export const CATEGORY_DISPLAY_ORDER: readonly CategoryId[] = ['joints', 'cigars', 'cigarettes'] as const;
+export const CATEGORY_ORDER_LTR: readonly CategoryId[] = ['cigarettes', 'cigars', 'joints'] as const;
 
 export interface CategoryMeta {
   id: CategoryId;

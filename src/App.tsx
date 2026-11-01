@@ -10,7 +10,8 @@ import { LogEditorModal } from './components/LogEditorModal';
 import { DayEditorModal } from './components/history/DayEditorModal';
 import { ToastHost } from './components/ui/Toast';
 
-const NAV: { id: Page; label: string; icon: typeof Gauge }[] = [
+/** Exact on-screen order, LEFT → RIGHT (container is dir="ltr"): מסך ראשי left, היסטוריה right. */
+const NAV_LTR: { id: Page; label: string; icon: typeof Gauge }[] = [
   { id: 'dashboard', label: 'מסך ראשי', icon: Gauge },
   { id: 'history', label: 'היסטוריה', icon: CalendarDays },
 ];
@@ -51,10 +52,11 @@ export default function App() {
       </main>
 
       <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-white/8 bg-zinc-950/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-lg">
-        <div className="mx-auto grid max-w-lg grid-cols-2">
-          {NAV.map(({ id, label, icon: Icon }) => (
+        <div dir="ltr" className="mx-auto grid max-w-lg grid-cols-2">
+          {NAV_LTR.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
+              dir="rtl"
               type="button"
               onClick={() => setPage(id)}
               aria-current={page === id ? 'page' : undefined}

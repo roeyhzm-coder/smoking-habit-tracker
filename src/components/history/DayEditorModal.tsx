@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Plus } from 'lucide-react';
-import { CATEGORY_DISPLAY_ORDER, CATEGORY_META, CategoryIcon } from '../../lib/categories';
+import { CATEGORY_ORDER_LTR, CATEGORY_META, CategoryIcon } from '../../lib/categories';
 import { combineDateTime, dayKeyOf, formatFullDate } from '../../lib/dates';
 import { useStore } from '../../store/store';
 import { useUi } from '../../store/ui';
@@ -18,7 +18,7 @@ export function DayEditorModal() {
 
   if (!dayKey) return null;
   const dayStart = combineDateTime(dayKey, '00:00');
-  const counts = CATEGORY_DISPLAY_ORDER.map((c) => ({ c, n: dayLogs.filter((l) => l.category === c).length }));
+  const counts = CATEGORY_ORDER_LTR.map((c) => ({ c, n: dayLogs.filter((l) => l.category === c).length }));
 
   const presetTs = (): number => {
     const now = new Date();
@@ -42,9 +42,9 @@ export function DayEditorModal() {
         </button>
       }
     >
-      <div className="mb-3 grid grid-cols-3 gap-2 text-center">
+      <div dir="ltr" className="mb-3 grid grid-cols-3 gap-2 text-center">
         {counts.map(({ c, n }) => (
-          <div key={c} className="rounded-xl border border-white/8 bg-zinc-950/60 px-2 py-2">
+          <div key={c} dir="rtl" className="rounded-xl border border-white/8 bg-zinc-950/60 px-2 py-2">
             <div className="flex items-center justify-center gap-1 text-[11px] text-zinc-400">
               <CategoryIcon category={c} className="size-3.5" />
               {CATEGORY_META[c].label}

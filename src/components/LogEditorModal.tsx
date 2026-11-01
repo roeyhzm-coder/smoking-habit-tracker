@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { CalendarClock, Trash2 } from 'lucide-react';
 import type { CategoryId } from '../types';
-import { CATEGORY_DISPLAY_ORDER, CATEGORY_META, CategoryIcon } from '../lib/categories';
+import { CATEGORY_ORDER_LTR, CATEGORY_META, CategoryIcon } from '../lib/categories';
 import { combineDateTime, toDateInput, toTimeInput } from '../lib/dates';
 import { useStore } from '../store/store';
 import { describeEntryShort, useUi } from '../store/ui';
@@ -92,10 +92,11 @@ export function LogEditorModal() {
       <form onSubmit={submit} className="space-y-4">
         <fieldset>
           <legend className="mb-2 text-xs font-semibold text-zinc-400">קטגוריה</legend>
-          <div className="grid grid-cols-3 gap-2">
-            {CATEGORY_DISPLAY_ORDER.map((c) => (
+          <div dir="ltr" className="grid grid-cols-3 gap-2">
+            {CATEGORY_ORDER_LTR.map((c) => (
               <button
                 key={c}
+                dir="rtl"
                 type="button"
                 onClick={() => setCategory(c)}
                 aria-pressed={category === c}

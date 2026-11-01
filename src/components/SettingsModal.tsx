@@ -1,7 +1,7 @@
 import { useRef, useState, type ReactNode } from 'react';
 import { Database, Download, RotateCcw, Sparkles, Trash2, Upload } from 'lucide-react';
 import type { CategoryId, LogEntry, PacingFocus } from '../types';
-import { CATEGORY_DISPLAY_ORDER, CATEGORY_META, CategoryIcon, FOCUS_LABEL } from '../lib/categories';
+import { CATEGORY_ORDER_LTR, CATEGORY_META, CategoryIcon, FOCUS_LABEL } from '../lib/categories';
 import { buildLedger, formatNum } from '../lib/calc';
 import { monthKeyOf, monthNameOnly } from '../lib/dates';
 import { exportJson, useStore } from '../store/store';
@@ -120,10 +120,11 @@ export function SettingsModal({ now }: { now: Date }) {
 
   return (
     <Modal open onClose={close} title="הגדרות תקציב וקנסות">
-      <div role="tablist" className="mb-2 grid grid-cols-3 gap-1 rounded-xl border border-white/8 bg-zinc-950 p-1">
-        {CATEGORY_DISPLAY_ORDER.map((c) => (
+      <div dir="ltr" role="tablist" className="mb-2 grid grid-cols-3 gap-1 rounded-xl border border-white/8 bg-zinc-950 p-1">
+        {CATEGORY_ORDER_LTR.map((c) => (
           <button
             key={c}
+            dir="rtl"
             role="tab"
             type="button"
             aria-selected={c === cat}
