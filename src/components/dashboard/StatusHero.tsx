@@ -20,7 +20,7 @@ function Indicator({ level, label, text }: { level: StatusLevel; label: string; 
     <div className={`flex items-start gap-2 rounded-xl ${st.bg} px-3 py-2`}>
       <Icon className={`mt-0.5 size-4 shrink-0 ${st.text}`} aria-hidden />
       <p className="text-sm leading-snug">
-        <span className="text-zinc-400">{label}: </span>
+        <span className="text-slate-400">{label}: </span>
         <span className={`font-semibold ${st.text}`}>{text}</span>
       </p>
     </div>
@@ -46,32 +46,32 @@ export function StatusHero({ status, settings, now }: { status: CategoryStatus; 
 
   return (
     <section
-      className={`relative overflow-hidden rounded-3xl border ${st.border} ${st.glow} bg-linear-to-b ${st.soft} to-zinc-900/80 p-5 transition-all duration-500`}
+      className={`relative overflow-hidden rounded-3xl border ${st.border} ${st.glow} bg-linear-to-b ${st.soft} to-slate-900/80 p-5 transition-all duration-500`}
     >
       <div className="flex items-center gap-2">
         <span className={`size-2.5 rounded-full ${st.dot}`} />
         <span className={`text-xs font-bold tracking-wide ${st.text}`}>{STATUS_LABEL[status.level]}</span>
-        <span className="ms-auto inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-400">
+        <span className="ms-auto inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400">
           <CategoryIcon category={status.category} className="size-4" />
           {meta.label}
         </span>
       </div>
-      <h2 className="mt-1 text-2xl font-extrabold text-zinc-50">{status.headline}</h2>
-      <p className="mt-0.5 text-sm text-zinc-400">{monthProgressText(now)}</p>
+      <h2 className="mt-1 text-2xl font-extrabold text-slate-100">{status.headline}</h2>
+      <p className="mt-0.5 text-sm text-slate-400">{monthProgressText(now)}</p>
 
       <div className="mt-4 grid grid-cols-3 gap-2 text-center">
         <div className="rounded-2xl bg-black/25 px-2 py-3">
-          <div className="text-[11px] font-semibold text-zinc-400">מותר החודש</div>
-          <div className="mt-1 text-2xl font-extrabold tabular-nums text-zinc-50">{formatNum(status.effective)}</div>
+          <div className="text-[11px] font-semibold text-slate-400">מותר החודש</div>
+          <div className="mt-1 text-2xl font-extrabold tabular-nums text-slate-100">{formatNum(status.effective)}</div>
         </div>
         <div className="rounded-2xl bg-black/25 px-2 py-3">
-          <div className="text-[11px] font-semibold text-zinc-400">עישנת</div>
+          <div className="text-[11px] font-semibold text-slate-400">עישנת</div>
           <div className={`mt-1 text-2xl font-extrabold tabular-nums ${st.text}`}>{status.used}</div>
         </div>
         <div className="rounded-2xl bg-black/25 px-2 py-3">
-          <div className="text-[11px] font-semibold text-zinc-400">{status.remaining >= 0 ? 'נשאר' : 'חריגה'}</div>
+          <div className="text-[11px] font-semibold text-slate-400">{status.remaining >= 0 ? 'נשאר' : 'חריגה'}</div>
           <div
-            className={`mt-1 text-2xl font-extrabold tabular-nums ${status.remaining >= 0 ? 'text-zinc-50' : 'text-rose-300'}`}
+            className={`mt-1 text-2xl font-extrabold tabular-nums ${status.remaining >= 0 ? 'text-slate-100' : 'text-rose-300'}`}
           >
             {formatNum(Math.abs(status.remaining))}
           </div>
@@ -83,20 +83,20 @@ export function StatusHero({ status, settings, now }: { status: CategoryStatus; 
           <div className={`h-full rounded-full ${barColor} transition-all duration-500`} style={{ width: `${usedPct}%` }} />
           {settings.focus !== 'monthly' ? (
             <div
-              className="absolute top-0 h-full w-0.5 bg-zinc-100/80"
+              className="absolute top-0 h-full w-0.5 bg-slate-100/80"
               style={{ insetInlineStart: `${pacePct}%` }}
               title="הקצב המותר עד היום"
             />
           ) : null}
         </div>
         {settings.focus !== 'monthly' ? (
-          <div className="mt-1.5 flex justify-between text-[11px] text-zinc-500">
+          <div className="mt-1.5 flex justify-between text-[11px] text-slate-500">
             <span>
-              מותר עד היום: <span className="tabular-nums text-zinc-300">{formatNum(status.allowedUntilToday)}</span>
+              מותר עד היום: <span className="tabular-nums text-slate-300">{formatNum(status.allowedUntilToday)}</span>
             </span>
             <span>
               {status.bank >= 0 ? 'בנק ימים נקיים: ' : 'מעל הקצב: '}
-              <span className={`tabular-nums ${status.bank >= 0 ? 'text-emerald-300' : 'text-amber-300'}`}>
+              <span className={`tabular-nums ${status.bank >= 0 ? 'text-teal-300' : 'text-amber-300'}`}>
                 {formatNum(Math.abs(status.bank))}
               </span>
             </span>
@@ -108,7 +108,7 @@ export function StatusHero({ status, settings, now }: { status: CategoryStatus; 
         {settings.focus === 'daily' ? (
           <div className="space-y-1">
             <Indicator level={status.daily.level} label="יומי" text={status.daily.text} />
-            <div className="flex items-center gap-1 ps-3 text-xs text-zinc-500">
+            <div className="flex items-center gap-1 ps-3 text-xs text-slate-500">
               תקציב יומי:
               <InlineNumber
                 label="תקציב יומי"
@@ -117,7 +117,7 @@ export function StatusHero({ status, settings, now }: { status: CategoryStatus; 
                 overridden={status.dailyOverridden}
                 onSave={(v) => updateSettings(status.category, { dailyOverride: v })}
                 onReset={() => updateSettings(status.category, { dailyOverride: null })}
-                valueClassName="font-semibold text-zinc-200"
+                valueClassName="font-semibold text-slate-200"
                 suffix={`${meta.label} ליום`}
               />
             </div>

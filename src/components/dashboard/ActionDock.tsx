@@ -53,7 +53,7 @@ export function ActionDock({ category, hasLogs }: { category: CategoryId; hasLog
           type="button"
           onClick={onAdd}
           disabled={busy}
-          className={`flex flex-1 items-center justify-center gap-2 rounded-2xl bg-zinc-50 px-4 py-4 text-lg font-extrabold text-zinc-950 shadow-lg shadow-black/40 transition-all active:scale-[0.97] disabled:opacity-80 ${
+          className={`flex flex-1 items-center justify-center gap-2 rounded-2xl bg-linear-to-l from-indigo-500 to-violet-500 px-4 py-4 text-lg font-extrabold text-white shadow-lg shadow-indigo-950/60 transition-all active:scale-[0.97] disabled:opacity-80 ${
             pulse > 0 ? 'animate-pop' : ''
           }`}
         >
@@ -65,7 +65,7 @@ export function ActionDock({ category, hasLogs }: { category: CategoryId; hasLog
           onClick={onUndo}
           disabled={!hasLogs}
           aria-label={`ביטול דיווח אחרון של ${meta.singular}`}
-          className="flex flex-col items-center justify-center gap-0.5 rounded-2xl border border-white/10 bg-zinc-900 px-4 text-xs font-bold text-zinc-300 transition-colors hover:bg-zinc-800 disabled:opacity-35"
+          className="flex flex-col items-center justify-center gap-0.5 rounded-2xl border border-white/8 bg-slate-900 px-4 text-xs font-bold text-slate-300 transition-colors hover:bg-slate-800 disabled:opacity-35"
         >
           <Undo2 className="size-5" />
           ביטול אחרון
@@ -74,7 +74,7 @@ export function ActionDock({ category, hasLogs }: { category: CategoryId; hasLog
       <button
         type="button"
         onClick={() => openLogEditor({ mode: 'add', category })}
-        className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-white/15 px-4 py-2.5 text-sm font-semibold text-zinc-300 transition-colors hover:border-sky-500/50 hover:text-sky-300"
+        className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-white/10 px-4 py-2.5 text-sm font-semibold text-slate-300 transition-colors hover:border-violet-500/50 hover:text-violet-300"
       >
         <CalendarPlus className="size-4" />
         הוספה לתאריך/שעה אחרת

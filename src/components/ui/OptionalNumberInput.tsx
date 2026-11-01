@@ -51,7 +51,7 @@ export function OptionalNumberInput({ value, onCommit, label, placeholder = '×œ×
         if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
       }}
       dir="ltr"
-      className={`w-16 rounded-lg border border-white/15 bg-zinc-950 px-2 py-1 text-center text-sm font-bold tabular-nums text-zinc-50 placeholder:font-normal placeholder:text-zinc-600 outline-none focus:ring-2 focus:ring-sky-500/60 ${className}`}
+      className={`w-16 rounded-lg border border-white/10 bg-slate-950 px-2 py-1 text-center text-sm font-bold tabular-nums text-slate-100 placeholder:font-normal placeholder:text-slate-600 outline-none focus:ring-2 focus:ring-violet-500/60 ${className}`}
     />
   );
 }

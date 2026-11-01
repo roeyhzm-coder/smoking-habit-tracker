@@ -27,7 +27,7 @@ export function InlineNumber({
   suffix,
   label,
   className = '',
-  valueClassName = 'font-bold text-zinc-50',
+  valueClassName = 'font-bold text-slate-100',
 }: InlineNumberProps) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(String(value));
@@ -66,8 +66,8 @@ export function InlineNumber({
               setEditing(false);
             }
           }}
-          className={`w-16 rounded-lg border bg-zinc-950 px-2 py-1 text-center text-sm tabular-nums text-zinc-50 outline-none focus:ring-2 focus:ring-sky-500/60 ${
-            valid ? 'border-white/15' : 'border-rose-500/70'
+          className={`w-16 rounded-lg border bg-slate-950 px-2 py-1 text-center text-sm tabular-nums text-slate-100 outline-none focus:ring-2 focus:ring-violet-500/60 ${
+            valid ? 'border-white/10' : 'border-rose-500/70'
           }`}
           dir="ltr"
         />
@@ -75,7 +75,7 @@ export function InlineNumber({
           type="submit"
           disabled={!valid}
           aria-label="שמירה"
-          className="rounded-md p-1 text-emerald-400 hover:bg-emerald-500/15 disabled:opacity-40"
+          className="rounded-md p-1 text-teal-400 hover:bg-teal-500/15 disabled:opacity-40"
         >
           <Check className="size-4" />
         </button>
@@ -83,7 +83,7 @@ export function InlineNumber({
           type="button"
           onClick={() => setEditing(false)}
           aria-label="ביטול"
-          className="rounded-md p-1 text-zinc-400 hover:bg-white/8"
+          className="rounded-md p-1 text-slate-400 hover:bg-white/8"
         >
           <X className="size-4" />
         </button>
@@ -101,11 +101,11 @@ export function InlineNumber({
         className="group inline-flex items-center gap-1 rounded-md px-1 py-0.5 transition-colors hover:bg-white/8"
       >
         <span className={`tabular-nums ${valueClassName}`}>{formatNum(value)}</span>
-        {suffix ? <span className="text-xs text-zinc-400">{suffix}</span> : null}
-        <Pencil className="size-3.5 text-zinc-500 transition-colors group-hover:text-sky-400" aria-hidden />
+        {suffix ? <span className="text-xs text-slate-400">{suffix}</span> : null}
+        <Pencil className="size-3.5 text-slate-500 transition-colors group-hover:text-violet-400" aria-hidden />
       </button>
       {overridden ? (
-        <span className="rounded bg-sky-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-sky-300">ידני</span>
+        <span className="rounded bg-violet-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-violet-300">ידני</span>
       ) : null}
       {overridden && onReset ? (
         <button
@@ -113,7 +113,7 @@ export function InlineNumber({
           onClick={onReset}
           aria-label={`איפוס ${label} לחישוב אוטומטי`}
           title="חזרה לחישוב אוטומטי"
-          className="rounded-md p-1 text-zinc-500 hover:bg-white/8 hover:text-zinc-200"
+          className="rounded-md p-1 text-slate-500 hover:bg-white/8 hover:text-slate-200"
         >
           <RotateCcw className="size-3.5" />
         </button>

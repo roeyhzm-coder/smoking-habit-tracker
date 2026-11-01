@@ -14,8 +14,8 @@ function Row({ label, hint, children }: { label: string; hint?: ReactNode; child
   return (
     <div className="flex items-center gap-3 py-2">
       <div className="flex-1">
-        <div className="text-sm text-zinc-300">{label}</div>
-        {hint ? <div className="text-[11px] text-zinc-500">{hint}</div> : null}
+        <div className="text-sm text-slate-300">{label}</div>
+        {hint ? <div className="text-[11px] text-slate-500">{hint}</div> : null}
       </div>
       <div className="text-sm">{children}</div>
     </div>
@@ -48,11 +48,11 @@ export function BudgetBreakdown({ category, settings, row, status }: Props) {
       title="פירוט תקציב וקנסות (ועריכה מהירה)"
       summary={
         <span className="tabular-nums" dir="rtl">
-          {formatNum(row.base)} − {formatNum(row.applied)} = <b className="text-zinc-200">{formatNum(row.effective)}</b>
+          {formatNum(row.base)} − {formatNum(row.applied)} = <b className="text-slate-200">{formatNum(row.effective)}</b>
         </span>
       }
     >
-      <div className="divide-y divide-white/6">
+      <div className="divide-y divide-white/5">
         <Row
           label="תקציב חודשי בסיסי"
           hint={row.baseOverridden ? `מוגדר ידנית לחודש זה (ברירת מחדל: ${settings.monthlyLimit})` : 'ברירת מחדל לכל חודש'}
@@ -78,7 +78,7 @@ export function BudgetBreakdown({ category, settings, row, status }: Props) {
             <button
               type="button"
               onClick={() => setBaseOverride(monthKey, category, settings.monthlyLimit)}
-              className="text-[11px] font-semibold text-sky-400 hover:text-sky-300"
+              className="text-[11px] font-semibold text-violet-400 hover:text-violet-300"
             >
               קבע תקציב שונה רק לחודש הזה
             </button>
@@ -95,7 +95,7 @@ export function BudgetBreakdown({ category, settings, row, status }: Props) {
             overridden={row.appliedOverridden}
             onSave={(v) => setPenaltyOverride(monthKey, category, Math.round(v))}
             onReset={() => setPenaltyOverride(monthKey, category, null)}
-            valueClassName={row.applied > 0 ? 'font-bold text-rose-300' : 'font-bold text-zinc-50'}
+            valueClassName={row.applied > 0 ? 'font-bold text-rose-300' : 'font-bold text-slate-100'}
             suffix={meta.label}
           />
         </Row>
@@ -104,7 +104,7 @@ export function BudgetBreakdown({ category, settings, row, status }: Props) {
             <button
               type="button"
               onClick={() => setPenaltyOverride(monthKey, category, 0)}
-              className="text-[11px] font-semibold text-sky-400 hover:text-sky-300"
+              className="text-[11px] font-semibold text-violet-400 hover:text-violet-300"
             >
               אפס קנס ל-0
             </button>
@@ -121,12 +121,12 @@ export function BudgetBreakdown({ category, settings, row, status }: Props) {
         </Row>
 
         <Row label="תקציב מעודכן לחודש" hint="תקציב בסיס פחות קנס">
-          <span className="font-extrabold tabular-nums text-zinc-50">{formatNum(row.effective)}</span>
+          <span className="font-extrabold tabular-nums text-slate-100">{formatNum(row.effective)}</span>
         </Row>
 
         {settings.focus !== 'monthly' ? (
           <Row label="בנק ימים נקיים" hint={`מותר עד היום ${formatNum(status.allowedUntilToday)}, עישנת ${status.used}`}>
-            <span className={`font-bold tabular-nums ${status.bank >= 0 ? 'text-emerald-300' : 'text-amber-300'}`}>
+            <span className={`font-bold tabular-nums ${status.bank >= 0 ? 'text-teal-300' : 'text-amber-300'}`}>
               {status.bank >= 0 ? '+' : '−'}
               {formatNum(Math.abs(status.bank))}
             </span>
@@ -149,7 +149,7 @@ export function BudgetBreakdown({ category, settings, row, status }: Props) {
             overridden={row.nextOverridden}
             onSave={(v) => setPenaltyOverride(nextKey, category, Math.round(v))}
             onReset={() => setPenaltyOverride(nextKey, category, null)}
-            valueClassName={row.nextApplied > 0 ? 'font-bold text-rose-300' : 'font-bold text-zinc-50'}
+            valueClassName={row.nextApplied > 0 ? 'font-bold text-rose-300' : 'font-bold text-slate-100'}
           />
         </Row>
 
@@ -164,7 +164,7 @@ export function BudgetBreakdown({ category, settings, row, status }: Props) {
       <button
         type="button"
         onClick={() => openSettings(category)}
-        className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-400 hover:text-zinc-100"
+        className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-slate-100"
       >
         <Settings2 className="size-3.5" />
         כל ההגדרות ל{meta.label}

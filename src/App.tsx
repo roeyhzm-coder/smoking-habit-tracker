@@ -27,12 +27,12 @@ export default function App() {
   }, [page]);
 
   return (
-    <div className="min-h-dvh bg-zinc-950 bg-[radial-gradient(ellipse_at_top,rgba(56,189,248,0.07),transparent_60%)]">
-      <header className="sticky top-0 z-40 border-b border-white/6 bg-zinc-950/80 pt-[env(safe-area-inset-top)] backdrop-blur-lg">
+    <div className="min-h-dvh bg-slate-950 bg-[radial-gradient(ellipse_at_top,rgba(99,102,241,0.12),transparent_55%),radial-gradient(ellipse_at_bottom_right,rgba(20,184,166,0.05),transparent_50%)] bg-fixed">
+      <header className="sticky top-0 z-40 border-b border-white/5 bg-slate-950/80 pt-[env(safe-area-inset-top)] backdrop-blur-lg">
         <div className="mx-auto flex max-w-lg items-center gap-3 px-4 py-3">
           <div className="flex-1">
-            <div className="text-base font-extrabold text-zinc-50">מעקב תקציב עישון</div>
-            <div className="text-[11px] text-zinc-500">
+            <div className="text-base font-extrabold text-slate-100">מעקב תקציב עישון</div>
+            <div className="text-[11px] text-slate-500">
               {now.toLocaleDateString('he-IL', { weekday: 'long', day: 'numeric', month: 'long' })}
             </div>
           </div>
@@ -40,7 +40,7 @@ export default function App() {
             type="button"
             onClick={() => openSettings()}
             aria-label="הגדרות תקציב וקנסות"
-            className="rounded-xl border border-white/10 p-2 text-zinc-300 transition-colors hover:bg-white/8 hover:text-zinc-50"
+            className="rounded-xl border border-white/8 p-2 text-slate-300 transition-colors hover:bg-white/8 hover:text-slate-100"
           >
             <Settings className="size-5" />
           </button>
@@ -51,7 +51,7 @@ export default function App() {
         {page === 'dashboard' ? <Dashboard now={now} /> : <History now={now} />}
       </main>
 
-      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-white/8 bg-zinc-950/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-lg">
+      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-white/5 bg-slate-950/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-lg">
         <div dir="ltr" className="mx-auto grid max-w-lg grid-cols-2">
           {NAV_LTR.map(({ id, label, icon: Icon }) => (
             <button
@@ -61,7 +61,7 @@ export default function App() {
               onClick={() => setPage(id)}
               aria-current={page === id ? 'page' : undefined}
               className={`flex flex-col items-center gap-0.5 py-2.5 text-xs font-semibold transition-colors ${
-                page === id ? 'text-sky-300' : 'text-zinc-500 hover:text-zinc-200'
+                page === id ? 'text-violet-300' : 'text-slate-500 hover:text-slate-200'
               }`}
             >
               <Icon className="size-5" />

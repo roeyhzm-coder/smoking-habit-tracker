@@ -28,18 +28,18 @@ function MonthSummary({ row, inProgress }: { row: MonthCategoryLedger; inProgres
   const pct = row.effective > 0 ? Math.min(100, (row.used / row.effective) * 100) : row.used > 0 ? 100 : 0;
 
   return (
-    <div className={`rounded-3xl border ${st.border} bg-linear-to-b ${st.soft} to-zinc-900/80 p-4`}>
+    <div className={`rounded-3xl border ${st.border} bg-linear-to-b ${st.soft} to-slate-900/80 p-4`}>
       <div className="flex items-center gap-3">
         <span className={`inline-flex items-center gap-1.5 rounded-full ${st.bg} px-3 py-1 text-sm font-bold ${st.text}`}>
           <v.Icon className="size-4" aria-hidden />
           {v.label}
         </span>
-        <p className="ms-auto text-sm text-zinc-300">
+        <p className="ms-auto text-sm text-slate-300">
           עישנת{' '}
           <span className={`text-2xl font-extrabold tabular-nums ${st.text}`}>{row.used}</span>
-          <span className="text-zinc-400"> מתוך </span>
-          <span className="text-lg font-bold tabular-nums text-zinc-100">{formatNum(row.effective)}</span>{' '}
-          <span className="text-zinc-500">{meta.label}</span>
+          <span className="text-slate-400"> מתוך </span>
+          <span className="text-lg font-bold tabular-nums text-slate-100">{formatNum(row.effective)}</span>{' '}
+          <span className="text-slate-500">{meta.label}</span>
         </p>
       </div>
       <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/8" aria-hidden>
@@ -75,7 +75,7 @@ export function History({ now }: { now: Date }) {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-extrabold text-zinc-50">היסטוריה</h1>
+      <h1 className="text-xl font-extrabold text-slate-100">היסטוריה</h1>
 
       <CategoryTabs active={category} onSelect={setCategory} />
 
@@ -86,19 +86,19 @@ export function History({ now }: { now: Date }) {
           onClick={() => olderKey && setSelected(olderKey)}
           disabled={!olderKey}
           aria-label="חודש קודם"
-          className="grid size-10 place-items-center rounded-xl border border-white/8 bg-zinc-900/60 text-zinc-300 transition-colors hover:bg-zinc-900 disabled:opacity-30"
+          className="grid size-10 place-items-center rounded-xl border border-white/5 bg-slate-900/50 backdrop-blur-md text-slate-300 transition-colors hover:bg-slate-900 disabled:opacity-30"
         >
           <ChevronRight className="size-5" />
         </button>
         <div className="flex-1 text-center">
-          <div className="text-lg font-extrabold text-zinc-50">{monthLabel(monthKey)}</div>
+          <div className="text-lg font-extrabold text-slate-100">{monthLabel(monthKey)}</div>
         </div>
         <button
           type="button"
           onClick={() => newerKey && setSelected(newerKey)}
           disabled={!newerKey}
           aria-label="חודש הבא"
-          className="grid size-10 place-items-center rounded-xl border border-white/8 bg-zinc-900/60 text-zinc-300 transition-colors hover:bg-zinc-900 disabled:opacity-30"
+          className="grid size-10 place-items-center rounded-xl border border-white/5 bg-slate-900/50 backdrop-blur-md text-slate-300 transition-colors hover:bg-slate-900 disabled:opacity-30"
         >
           <ChevronLeft className="size-5" />
         </button>
@@ -119,7 +119,7 @@ export function History({ now }: { now: Date }) {
                 aria-selected={isSel}
                 onClick={() => setSelected(k)}
                 className={`flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${
-                  isSel ? 'border-zinc-100 bg-zinc-100 text-zinc-950' : 'border-white/8 bg-zinc-900/60 text-zinc-400 hover:text-zinc-100'
+                  isSel ? 'border-violet-400/40 bg-violet-500/15 text-violet-100' : 'border-white/5 bg-slate-900/50 backdrop-blur-md text-slate-400 hover:text-slate-100'
                 }`}
               >
                 <span className={`size-2 rounded-full ${STATUS_STYLES[lvl].dot}`} />
@@ -132,10 +132,10 @@ export function History({ now }: { now: Date }) {
 
       {row ? <MonthSummary row={row} inProgress={inProgress} /> : null}
 
-      <div className="rounded-3xl border border-white/8 bg-zinc-900/50 p-3">
+      <div className="rounded-3xl border border-white/5 bg-slate-900/50 p-3">
         <MonthCalendar data={data} ledger={ledger} monthKey={monthKey} category={category} now={now} />
       </div>
-      <p className="text-center text-xs text-zinc-600">לחיצה על יום פותחת את עורך היום</p>
+      <p className="text-center text-xs text-slate-600">לחיצה על יום פותחת את עורך היום</p>
     </div>
   );
 }

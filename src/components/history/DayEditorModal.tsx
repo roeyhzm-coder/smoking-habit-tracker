@@ -35,7 +35,7 @@ export function DayEditorModal() {
         <button
           type="button"
           onClick={() => openLogEditor({ mode: 'add', category: activeCategory, presetTimestamp: presetTs() })}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-sky-500 px-4 py-3 text-sm font-bold text-zinc-950 hover:bg-sky-400"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-500 px-4 py-3 text-sm font-bold text-white hover:bg-indigo-400"
         >
           <Plus className="size-4" strokeWidth={3} />
           הוספת דיווח לתאריך זה
@@ -44,12 +44,12 @@ export function DayEditorModal() {
     >
       <div dir="ltr" className="mb-3 grid grid-cols-3 gap-2 text-center">
         {counts.map(({ c, n }) => (
-          <div key={c} dir="rtl" className="rounded-xl border border-white/8 bg-zinc-950/60 px-2 py-2">
-            <div className="flex items-center justify-center gap-1 text-[11px] text-zinc-400">
+          <div key={c} dir="rtl" className="rounded-xl border border-white/5 bg-slate-950/60 px-2 py-2">
+            <div className="flex items-center justify-center gap-1 text-[11px] text-slate-400">
               <CategoryIcon category={c} className="size-3.5" />
               {CATEGORY_META[c].label}
             </div>
-            <div className="text-lg font-extrabold tabular-nums text-zinc-50">{n}</div>
+            <div className="text-lg font-extrabold tabular-nums text-slate-100">{n}</div>
           </div>
         ))}
       </div>

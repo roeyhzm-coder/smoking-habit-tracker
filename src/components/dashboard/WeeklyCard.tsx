@@ -33,27 +33,27 @@ export function WeeklyCard({ status, settings, prominent }: Props) {
 
   if (!prominent) {
     return (
-      <div className={`flex items-center gap-3 rounded-2xl border ${st.border} bg-zinc-900/60 px-4 py-3`}>
+      <div className={`flex items-center gap-3 rounded-2xl border ${st.border} bg-slate-900/50 backdrop-blur-md px-4 py-3`}>
         <CalendarRange className={`size-4 ${st.text}`} aria-hidden />
-        <span className="text-sm text-zinc-300">השבוע ({range}):</span>
+        <span className="text-sm text-slate-300">השבוע ({range}):</span>
         <span className={`text-sm font-bold tabular-nums ${st.text}`}>{status.weekCount}</span>
-        <span className="ms-auto flex items-center gap-1 text-xs text-zinc-400">מגבלה: {limitEditor}</span>
+        <span className="ms-auto flex items-center gap-1 text-xs text-slate-400">מגבלה: {limitEditor}</span>
       </div>
     );
   }
 
   return (
-    <section className={`rounded-3xl border ${st.border} bg-zinc-900/70 p-4`}>
+    <section className={`rounded-3xl border ${st.border} bg-slate-900/50 backdrop-blur-md p-4`}>
       <div className="flex items-center gap-2">
         <CalendarRange className={`size-5 ${st.text}`} aria-hidden />
-        <h3 className="text-sm font-bold text-zinc-100">קצב שבועי</h3>
-        <span className="text-xs text-zinc-500">({range})</span>
-        <span className="ms-auto flex items-center gap-1 text-xs text-zinc-400">עד {limitEditor}</span>
+        <h3 className="text-sm font-bold text-slate-100">קצב שבועי</h3>
+        <span className="text-xs text-slate-500">({range})</span>
+        <span className="ms-auto flex items-center gap-1 text-xs text-slate-400">עד {limitEditor}</span>
       </div>
       <div className="mt-3 flex items-end gap-3">
         <div className={`text-4xl font-extrabold tabular-nums ${st.text}`}>
           {status.weekCount}
-          <span className="text-lg font-semibold text-zinc-500"> / {limit}</span>
+          <span className="text-lg font-semibold text-slate-500"> / {limit}</span>
         </div>
         <div className="mb-2 flex flex-1 flex-wrap justify-end gap-1.5" aria-hidden>
           {Array.from({ length: Math.min(slots, 14) }, (_, i) => (
@@ -62,9 +62,9 @@ export function WeeklyCard({ status, settings, prominent }: Props) {
               className={`size-3.5 rounded-full border ${
                 i < status.weekCount
                   ? i < limit
-                    ? 'border-blue-300/60 bg-blue-500'
+                    ? 'border-indigo-300/60 bg-indigo-400'
                     : 'border-rose-300/60 bg-rose-500'
-                  : 'border-emerald-400/50 bg-emerald-400/15'
+                  : 'border-teal-400/50 bg-teal-400/15'
               }`}
             />
           ))}
